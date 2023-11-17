@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register</title>
+  <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <center>
+    <h1 style="color: #00ccff; padding-top: 15%;">Secret Encryption</h1>
+    <div class="login_form_container">
+      <div class="login_form">
+        <h2>Register</h2>
+        <div class="input_group">
+          <i class="fa fa-user"></i>
+          <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          class="input_text"
+          autocomplete="off"
+          />
+          <span class="label">Username</span>
+        </div>
+        <div class="input_group">
+          <i class="fa fa-unlock-alt"></i>
+          <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          class="input_text"
+          autocomplete="off"
+          />
+          <span class="label">Password</span>
+        </div>
+        <div class="input_group"  style=" margin-bottom: -42px;">
+          <i class="fa fa-unlock-alt"></i>
+          <input
+          type="text"
+          name="email"
+          placeholder="Email"
+          class="input_text"
+          autocomplete="off"
+          />
+          <span class="label">Email</span>
+        </div>
+        <div class="button_group" id="login_button">
+          <a>Sign Up</a>
+        </div>
+        <div class="fotter">
+          <a href="index.html">Kembali</a>
+        </div>
+        </div>
+      </div>
+    </div>
+  </center>
+  <div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">✖</span>
+            <h2>Message</h2>
+        </div>
+        <div class="modal-body">
+            <p id="modal-message"></p>
+        </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script src="script.js"></script>
+<script>
+$(document).ready(function () {
+    var modal = document.getElementById("modal");
+    var span = document.getElementsByClassName("close")[0];
+    var modalMessage = document.getElementById("modal-message");
+
+    $('#login_button').on('click', function (e) {
+        e.preventDefault(); // Prevents the default form submission
+
+        // Retrieving the values from inputs
+        var username = $('input[name="username"]').val();
+        var password = $('input[name="password"]').val();
+        var email = $('input[name="email"]').val(); 
+
+        // Creating a data object to send to the server
+        var userData = {
+            username: username,
+            password: password,
+            email: email
+        };
+
+        // Sending an AJAX request to the server for registration
+        $.ajax({
+            url: 'http://localhost:9000/api/user/register',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(userData),
+            success: function (response) {
+                // Handle the success response here
+                modalMessage.textContent = 'Registration Successful!';
+                modal.style.display = "block";
+            },
+            error: function (xhr, status, error) {
+                // Handle errors here
+                var response = JSON.parse(xhr.responseText);
+                modalMessage.textContent = 'Registration Failed ' + response.message;
+                modal.style.display = "block";
+            }
+        });
+    });
+
+    // Close the modal when the (x) button is clicked
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // Close the modal when clicking outside of it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+  <div class="container">
+    <h1 style="color: #00ccff;">Secret Encryption</h1>
+    <div class="login_form_container">
+      <div class="login_form">
+        <h2>Login</h2>
+        <div class="input_group">
+          <i class="fa fa-user" aria-hidden="true"></i>
+          <input type="input" name="username" id="username" placeholder="Username" class="input_text" autocomplete="off"/>
+         <span class="label">Username</span>
+        </div>
+        <div class="input_group">
+          <i class="fa fa-unlock-alt"></i>
+          <input type="password" id="password" name="password" placeholder="Password" class="input_text" autocomplete="off"/>
+          <span class="label">Password</span>
+        </div>
+        <div class="button_group" id="login_button">
+          <a>Submit</a>
+        </div>
+        <div class="fotter">
+          <a href="register.html">Sign Up</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Structure -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">✖</span>
+            <h2>Message</h2>
+        </div>
+        <div class="modal-body">
+            <p id="modal-message"></p>
+        </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script src="script.js"></script>
+  <script>
+   $(document).ready(function () {
+      var modal = document.getElementById("modal");
+      var span = document.getElementsByClassName("close")[0];
+      var modalMessage = document.getElementById("modal-message");
+
+      $('#login_button').on('click', function (e) {
+        e.preventDefault();
+
+        var username = $('#username').val();
+        var password = $('#password').val();
+
+        var userData = {
+          username: username,
+          password: password
+        };
+
+        $.ajax({
+          url: 'http://localhost:9000/api/user/login', // Change to your actual API endpoint
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(userData),
+          success: function (response) {
+            modalMessage.textContent = 'Login Successful!'; // Capital 'S'
+            modal.style.display = "block";
+          },
+          error: function (xhr, status, error) {
+            var response = JSON.parse(xhr.responseText);
+            modalMessage.textContent = 'Login Failed: ' + response.message; // Added colon for clarity
+            modal.style.display = "block";
+          }
+        });
+      });
+
+      span.onclick = function() {
+        modal.style.display = "none";
+
+        // Redirect to home.html only if the modal was closed after a successful login
+        if (modalMessage.textContent === 'Login Successful!') { // Capital 'S'
+          window.location.href = 'home.html';
+        }
+      }
+
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+
+          // Redirect to home.html only if the modal was closed after a successful login
+          if (modalMessage.textContent === 'Login Successful!') { // Capital 'S'
+            window.location.href = 'home.html';
+          }
+        }
+      }
+    });
+</script>
+</body>
+</html>
