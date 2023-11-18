@@ -2,9 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
-// Middleware
+// Konfigurasi CORS
+const corsOptions = {
+  origin: 'http://localhost', // Ganti dengan URL origin frontend Anda
+  credentials: true // Tanda kutip menunjukkan ini adalah string
+};
+
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions)); // Gunakan CORS dengan opsi yang telah dikonfigurasi
 
 // Routes
 const userRoutes = require('./routes/userRoutes'); // Impor rute pengguna

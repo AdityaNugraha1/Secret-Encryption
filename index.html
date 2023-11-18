@@ -49,6 +49,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
   <script src="script.js"></script>
+  <script src="session.js"></script>
   <script>
    $(document).ready(function () {
       var modal = document.getElementById("modal");
@@ -67,21 +68,21 @@
         };
 
         $.ajax({
-          url: 'http://localhost:9000/api/user/login', // Change to your actual API endpoint
+          url: 'http://localhost:9000/api/user/login',
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify(userData),
+          xhrFields: { withCredentials: true }, // This ensures cookies are included
           success: function (response) {
-            modalMessage.textContent = 'Login Successful!'; // Capital 'S'
+            modalMessage.textContent = 'Login Successful!';
             modal.style.display = "block";
           },
           error: function (xhr, status, error) {
             var response = JSON.parse(xhr.responseText);
-            modalMessage.textContent = 'Login Failed: ' + response.message; // Added colon for clarity
+            modalMessage.textContent = 'Login Failed: ' + response.message;
             modal.style.display = "block";
           }
         });
-      });
 
       span.onclick = function() {
         modal.style.display = "none";
@@ -97,7 +98,7 @@
           modal.style.display = "none";
 
           // Redirect to home.html only if the modal was closed after a successful login
-          if (modalMessage.textContent === 'Login Successful!') { // Capital 'S'
+          if (modalMessage.textContent === 'Login Successful!') { 
             window.location.href = 'home.html';
           }
         }

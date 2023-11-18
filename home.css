@@ -8,9 +8,12 @@ html, body {
   width: 100%;
   height: 100%;
   font-family: system-ui, -apple-system, Helvetica, Arial, sans-serif;
-  background: #0c1022;
+  background: #ffffff;
 }
 
+.content{
+  border-radius: 6px;
+}
 /* Reset anchor styles */
 a {
   color: #fff;
@@ -160,8 +163,8 @@ nav {
   margin: 0 auto;
   margin-top: 60px; /* Push container down to not overlap with the navbar */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  background-color: #0c1022;
+  border-radius: 9px;
+  background-color: #f0f0f0;
 }
 
 ul.menu li {
@@ -174,15 +177,6 @@ button {
   width: 100%;
 }
 
-.container {
-  margin-top: 50px;
-  padding: 60px 20px 20px 20px; /* Add top padding to avoid overlap with the fixed nav */
-  max-width: 1000px;
-  margin: 0 auto;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  background-color: #f0f0f0;
-}
 
 h1 {
   text-align: center;
@@ -281,11 +275,11 @@ p {
 
 input[type="text"],
 input[type="password"] {
-  width: calc(100% - 20px);
+  width: calc(100%);
 }
 
 input[type="number"] {
-  width: calc(100% - 20px);
+  width: calc(100%);
   margin-bottom: 5px;
 }
 
@@ -344,8 +338,9 @@ ul.menu li a:hover {
 
   /* Adjust the container for tablets */
   .container {
-    width: calc(100% - 40px); /* Full width minus padding */
-    padding: 60px 20px 20px;
+    width: calc(100% - 40px); 
+    padding: 30px 30px 30px; 
+    margin-top: 90px;
   }
 
   .content {
@@ -355,7 +350,7 @@ ul.menu li a:hover {
   /* Adjust input fields for tablets */
   .input-fields input,
   .input-fields button {
-    width: calc(100% - 40px); /* Full width minus padding */
+    width: calc(100%); /* Full width minus padding */
   }
 }
 
@@ -370,9 +365,9 @@ ul.menu li a:hover {
 
   /* Adjust the container for small screens */
   .container {
-    width: calc(100% - 40px); /* Full width minus padding */
-    padding: 60px 20px 20px; /* Adjust top padding for mobile */
-    margin-top: 0; /* Remove the margin top */
+    width: calc(100% - 40px); 
+    padding: 30px 30px 30px; 
+    margin-top: 90px;
   }
 
   .content {
@@ -382,7 +377,7 @@ ul.menu li a:hover {
   /* Make input fields full width */
   .input-fields input,
   .input-fields button {
-    width: calc(100% - 40px); /* Full width minus padding */
+    width: calc(100%); /* Full width minus padding */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
   }
 }
@@ -410,15 +405,15 @@ ul.menu li a:hover {
 
   /* Style adjustments for the container */
   .container {
-    max-width: 1000px; /* or whatever max width you prefer */
-    margin: 80px auto; /* More vertical margin on larger screens */
-    padding: 40px; /* More padding for larger screens */
+    width: calc(100% - 40px); 
+    padding: 30px 30px 30px; 
+    margin-top: 90px; 
   }
 
   /* Adjustments for content within the container */
   .content {
     margin-top: 0; /* Adjust as necessary */
-    padding: 30px; /* More padding for larger content areas */
+    padding: 18px; /* More padding for larger content areas */
   }
 
   /* Styling for input fields and buttons to be more desktop-friendly */
@@ -427,7 +422,4 @@ ul.menu li a:hover {
     padding: 15px 20px; /* Larger padding for easier interaction */
     font-size: 16px; /* Larger font size for readability */
   }
-
-  /* Additional desktop-specific styles */
-  /* ... */
 }

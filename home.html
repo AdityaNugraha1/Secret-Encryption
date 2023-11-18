@@ -4,42 +4,43 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Navbar</title>
+  <title>Text Encryption</title>
   <link rel="stylesheet" href="home.css" />
 </head>
 <body>
   <header>
     <nav>
-      <a class="logo" href="home.html" style="padding-right: 20%;">Tiger Codes</a>
+      <a class="logo" href="home.html" style="padding-right: 20%;">Secret Encryption</a>
       <div class="mobile-menu">
         <div class="line1"></div>
         <div class="line2"></div>
         <div class="line3"></div>
       </div>
       <ul class="nav-list">
-        <li><a href="#">Text Encryption</a></li>
+        <li><a href="home.html">Text Encryption</a></li>
         <li><a href="#">Picture Encryption</a></li>
         <li><a href="#">Secret Encryption</a></li>
         <li><a href="#">History</a></li>
       </ul>
     </nav>
+    <br>
   </header>
   <main>
     <div class="container">
-    <div class="content" style="padding-top: 6%;">
-      <div id="caesar" class="active">
-        <h2>Enkripsi Caesar</h2>
+    <div class="content" style="padding-top: 4%;">
+      <div id="text" class="active" style="">
+        <h2>Text Encryption</h2>
         <br>
         <div class="input-fields">
           <input type="text" id="plaintext-caesar" placeholder="" />
           <label for="">Plaintext</label>
         </div>
         <div class="input-fields">
-          <input type="number" id="key-caesar" placeholder="" />
+          <input type="number" id="key" placeholder="" />
           <label for="">Key</label>
         </div>
-        <button type="button" class="btn-encrypt" id="encrypt-caesar">Enkripsi</button>
-        <button type="button" class="btn-decrypt" id="decrypt-caesar">Dekripsi</button>
+        <button type="button" class="btn-encrypt" id="encrypt">Enkripsi</button>
+        <button type="button" class="btn-decrypt" id="decrypt">Dekripsi</button>
         <div class="result">
           <p id="result-caesar"></p>
         </div>
@@ -48,5 +49,9 @@
   </div>
     </main>
     <script src="mobile-navbar.js"></script>
+    <script src="session.js"></script>
+    <script>
+  checkLogin();
+</script>
   </body>
   </html>

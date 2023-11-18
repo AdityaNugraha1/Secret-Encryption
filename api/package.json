@@ -11,14 +11,30 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.6.2",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "connect-redis": "^7.1.0",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "jimp": "^0.3.5",
     "jsonwebtoken": "^9.0.2",
     "md5": "^2.3.0",
+    "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
-    "sweetalert2": "^11.10.0"
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
+    "path": "^0.12.7",
+    "redis": "^4.6.10",
+    "session-file-store": "^1.5.0",
+    "sweetalert2": "^11.6.13",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }

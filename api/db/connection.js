@@ -4,7 +4,8 @@ const dbConfig = {
   host: 'localhost',
   user: 'root',
   password: '',
-  database: 'kriptocoba'
+  database: 'kriptocoba',
+  createDatabaseTable: true
 };
 
 const connection = mysql.createConnection(dbConfig);
