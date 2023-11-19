@@ -113,17 +113,25 @@ $(document).ready(function () {
         });
     });
 
-    // Close the modal when the (x) button is clicked
     span.onclick = function() {
         modal.style.display = "none";
-    }
 
-    // Close the modal when clicking outside of it
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
+        // Redirect to home.html only if the modal was closed after a successful login
+        if (modalMessage.textContent === 'Registration Successful!') { // Capital 'S'
+          window.location.href = 'index.html';
         }
-    }
+      }
+
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+
+          // Redirect to home.html only if the modal was closed after a successful login
+          if (modalMessage.textContent === 'Registration Successful!') { // Capital 'S'
+            window.location.href = 'index.html';
+          }
+        }
+      }
 });
 
 </script>

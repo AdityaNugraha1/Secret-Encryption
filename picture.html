@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Text Encryption</title>
+  <link rel="stylesheet" href="picture.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <a class="logo" href="home.html" style="padding-right: 20%;">Secret Encryption</a>
+      <div class="mobile-menu">
+        <div class="line1"></div>
+        <div class="line2"></div>
+        <div class="line3"></div>
+      </div>
+      <ul class="nav-list" style="margin-top: -3px;">
+        <li><a href="home.html">Text Encryption</a></li>
+        <li><a href="picture.html">Picture Encryption</a></li>
+        <li><a href="secret.html">Secret Encryption</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="index.html" onclick="logout()">Logout</a></li>
+      </ul>
+    </nav>
+    <br>
+  </header>
+  <main>
+    <div class="container">
+    <h2 style="padding-bottom: 20px;">Image Upload</h2>
+    <!-- Upload  -->
+    <form id="file-upload-form" class="uploader" enctype="multipart/form-data">
+      <input id="file-upload" type="file" name="image" accept="image/*" />
+      <label for="file-upload" id="file-drag">
+        <img id="file-image" src="#" alt="Preview" class="hidden">
+        <div id="start">
+          <i class="fa fa-download" aria-hidden="true"></i>
+          <div>Select a file or drag here</div>
+          <div id="notimage" class="hidden">Please select an image</div>
+          <span id="file-upload-btn" class="btn btn-primary">Select a file</span>
+        </div>
+        <div id="response" class="hidden">
+          <div id="messages"></div>
+          <progress class="progress" id="file-progress" value="0">
+            <span>0</span>%
+          </progress>
+        </div>
+      </label>
+      <button type="button">
+        <span class="box" id="enkripsi" style="margin-top: 13%; ">
+          Enkripsi
+        </span>
+      </button>
+      <button type="button">
+        <span class="box" id="dekripsi" style="margin-top: 13%;">
+          Dekripsi
+        </span>
+      </button>
+      <a id="download-link" style="display: none;"></a>
+      <button type="button" id="Download">
+        <span class="box" style="margin-top: 13%;">
+          Download
+        </span>
+      </button>
+    </form>
+  </div>
+  </main>
+  <script src="mobile-navbar.js"></script>
+  <script src="session.js"></script>
+  <script src="picture.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const fileUploadInput = document.getElementById('file-upload');
+      const fileImage = document.getElementById('file-image');
+      const enkripsiButton = document.getElementById('enkripsi');
+      const dekripsiButton = document.getElementById('dekripsi');
+      const downloadButton = document.getElementById('Download');
+      const downloadLink = document.getElementById('download-link');
+
+      enkripsiButton.addEventListener('click', async function () {
+        const file = fileUploadInput.files[0];
+
+        if (!file) {
+          alert('Please select an image before encrypting.');
+          return;
+        }
+
+        const sessionId = getSessionId(); // Pastikan fungsi ini mengembalikan nilai yang benar
+
+        const formData = new FormData();
+        formData.append('sessionId', sessionId);
+        formData.append('image', file);
+
+        try {
+          const response = await fetch('http://localhost:9000/api/user/masukgambar', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.statusText);
+          }
+
+          try {
+            const data = await response.json();
+            // Tampilkan gambar yang dienkripsi
+            const imageElement = document.getElementById('file-image');
+            // Pastikan data.imageUrl ada dan merupakan string
+            if (typeof data.imageUrl === 'string') {
+              imageElement.src = data.imageUrl;
+              imageElement.classList.remove('hidden');
+            } else {
+              console.error('imageUrl is not a string:', data.imageUrl);
+            }
+            alert(data.message);
+          } catch (jsonError) {
+            console.error('Could not parse JSON:', jsonError);
+          }
+        } catch (error) {
+          console.error('Fetch error:', error);
+          alert('An error occurred. Please try again.');
+        }
+      });
+
+      dekripsiButton.addEventListener('click', async function () {
+        const file = fileUploadInput.files[0];
+
+        if (!file) {
+          alert('Please select an image before decrypting.');
+          return;
+        }
+
+        const sessionId = getSessionId(); // Pastikan fungsi ini mengembalikan nilai yang benar
+
+        const formData = new FormData();
+        formData.append('sessionId', sessionId);
+        formData.append('image', file);
+
+        try {
+          const response = await fetch('http://localhost:9000/api/user/dekripgambar', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.statusText);
+          }
+
+          try {
+            const data = await response.json();
+            // Tampilkan gambar yang didekripsi
+            const imageElement = document.getElementById('file-image');
+            // Pastikan data.imageUrl ada dan merupakan string
+            if (typeof data.imageUrl === 'string') {
+              imageElement.src = data.imageUrl;
+              imageElement.classList.remove('hidden');
+            } else {
+              console.error('imageUrl is not a string:', data.imageUrl);
+            }
+            alert(data.message);
+          } catch (jsonError) {
+            console.error('Could not parse JSON:', jsonError);
+          }
+        } catch (error) {
+          console.error('Fetch error:', error);
+          alert('An error occurred. Please try again.');
+        }
+      });
+
+      downloadButton.addEventListener('click', function () {
+      // Mendapatkan URL dari gambar yang saat ini ditampilkan
+        const currentImageSrc = fileImage.getAttribute('src');
+
+        if (currentImageSrc) {
+          const filename = currentImageSrc.split('/').pop(); // Mengambil bagian terakhir dari URL sebagai nama file
+          const downloadLink = document.getElementById('download-link');
+
+          // Mengatur atribut `href` dan `download` pada elemen anchor untuk download
+          downloadLink.href = currentImageSrc;
+          downloadLink.setAttribute('download', filename); // Menggunakan nama file dari URL
+          downloadLink.style.display = 'block'; // Menampilkan link jika sebelumnya hidden
+
+          // Memicu klik pada link untuk memulai unduhan
+          downloadLink.click();
+
+          downloadLink.style.display = 'none'; // Menyembunyikan kembali link setelah diklik
+        } else {
+          alert('No image to download. Please encrypt or decrypt an image first.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

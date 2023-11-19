@@ -147,6 +147,5 @@ function getNextLocation(history, total) {
   }
 };
 
-module.exports = encode;
-module.exports = decode;
-module.exports = loadImage;
+module.exports = encodeMessage;
+module.exports = decodeMessage;

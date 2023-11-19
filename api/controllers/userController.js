@@ -4,7 +4,9 @@ const encryptVigenere = require('../enkripdekrip/encryptVigenere');
 const decryptVigenere = require('../enkripdekrip/decryptVigenere');
 const xor_encrypt = require('../enkripdekrip/xor_encrypt');
 const xor_decrypt = require('../enkripdekrip/xor_decrypt');
-const stegano = require('../enkripdekrip/stegano');
+//const encodeMessage = require('../enkripdekrip/stegano');
+//const decodeMessage = require('../enkripdekrip/stegano');
+//const steganoenkripsi = require('../enkripdekrip/steganoenkrip'); // 
 const Jimp = require('jimp');
 const path = require('path');
 const fs = require('fs');
@@ -129,7 +131,6 @@ exports.superenkripsi = async (req, res) => {
   }
 };
 
-
 exports.superdekripsi = async (req, res) => {
   try {
     const { sessionId, plaintext } = req.body;
@@ -182,40 +183,6 @@ exports.history = async (req, res) => {
   });
 };
 
-
-exports.encryptImage = async (req, res) => {
-  try {
-      if (!req.file) {
-          return res.status(400).json({ message: "No image file provided" });
-      }
-      const { sessionId } = req.body; // Or wherever you get this from
-      const imagePath = req.file.path;
-
-      // Read the image using Jimp
-      const img = await Jimp.read(imagePath);
-
-      // Apply your encryption logic here
-      // Example: Invert the colors of the image
-      img.invert();
-
-      // Generate an encrypted file name or path
-      const encryptedImagePath = path.join(__dirname, '../assets', 'encrypted-' + req.file.filename);
-
-      // Save the encrypted image
-      await img.writeAsync(encryptedImagePath);
-
-      // Save reference of the encrypted image to the database
-      const insertImageQuery = 'INSERT INTO enkripsi (sessionId, type, value) VALUES (?, ?, ?)';
-      await connection.query(insertImageQuery, [sessionId, "Picture Encryption", encryptedImagePath]);
-
-      // Send response
-      res.status(200).json({ message: "Gambar berhasil dienkripsi", path: encryptedImagePath });
-  } catch (error) {
-      console.error("Error:", error);
-      res.status(500).json({ message: "Terjadi kesalahan saat mengirim permintaan ke server" });
-  }
-};
-
 exports.masukgambar = async (req, res) => {
   try {
     const { sessionId } = req.body;  // atau cara lain sesuai dengan bagaimana Anda mendapatkan sessionId
@@ -232,21 +199,147 @@ exports.masukgambar = async (req, res) => {
     }
 
     // Gunakan path lengkap untuk file yang diunggah
-    const uploadedImagePath = path.join(assetsDir, image);
-
+    const uploadedImagePath = path.join(__dirname, '../assets', image);
     const img = await Jimp.read(uploadedImagePath);
     img.invert();
-    
-    const encryptedImagePath = path.join(assetsDir, 'encrypted-' + image);
+    img.rotate(180) // Memutar gambar 180 derajat
+       .flip(false, true) // Membalik gambar secara vertikal
+       .color([
+          { apply: 'hue', params: [90] }, // Mengubah hue
+          { apply: 'lighten', params: [10] } // Mencerahkan gambar
+       ]);
+    const encryptedImagePath = path.join(__dirname, '../assets', 'encrypted-' + image);
     await img.writeAsync(encryptedImagePath);
 
     const insertgambar = 'INSERT INTO enkripsi (idusername, type, value) VALUES (?, ?, ?)';
-    connection.query(insertgambar, [sessionId, "image encryption", encryptedImagePath], (error, results) => {
+    connection.query(insertgambar, [sessionId, "Image Encryption", encryptedImagePath], (error, results) => {
       if (error) {
         console.error('Error during the query:', error);
         return res.status(500).json({ message: "Kesalahan Server" });
       }
-      res.status(201).json({message: "Image uploaded and entry created successfully." });
+      const encryptedImageURL = `http://localhost:9000/assets/encrypted-${image}`;
+      res.status(201).json({message: "Image uploaded and entry created successfully.", imageUrl: encryptedImageURL });
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ message: "Kesalahan Server" });
+  }
+};
+
+exports.dekripgambar = async (req, res) => {
+  
+  try {
+    const { sessionId } = req.body;  // atau cara lain sesuai dengan bagaimana Anda mendapatkan sessionId
+    const image = req.file ? req.file.filename : null;
+
+    if (!sessionId || !image) {
+      return res.status(400).json({ message: "Semua Input Diperlukan" });
+    }
+
+    // Pastikan path ke direktori assets ada
+    const assetsDir = path.join(__dirname, '../assets');
+    if (!fs.existsSync(assetsDir)) {
+      fs.mkdirSync(assetsDir, { recursive: true });
+    }
+
+    // Gunakan path lengkap untuk file yang diunggah
+    const uploadedImagePath = path.join(__dirname, '../assets', image);
+    const img = await Jimp.read(uploadedImagePath);
+    img.rotate(180) // Memutar kembali gambar 180 derajat
+       .flip(false, true) // Membalik kembali gambar secara vertikal
+       .color([
+          { apply: 'hue', params: [-90] }, // Mengembalikan hue
+          { apply: 'darken', params: [10] } // Menggelapkan gambar
+       ]);
+       img.invert();
+    const dekripImagePath = path.join(__dirname, '../assets', 'decrypted-' + image);
+    await img.writeAsync(dekripImagePath);
+
+    const insertgambar = 'INSERT INTO enkripsi (idusername, type, value) VALUES (?, ?, ?)';
+    connection.query(insertgambar, [sessionId, "Image Decryption", dekripImagePath], (error, results) => {
+      if (error) {
+        console.error('Error during the query:', error);
+        return res.status(500).json({ message: "Kesalahan Server" });
+      }
+      const dekripImageurl = `http://localhost:9000/assets/decrypted-${image}`;
+      res.status(201).json({message: "Image uploaded and entry created successfully.", imageUrl: dekripImageurl });
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ message: "Kesalahan Server" });
+  }
+};
+
+exports.sendToServer = async (req, res) => {
+ 
+  try {
+    const { sessionId } = req.body;  // atau cara lain sesuai dengan bagaimana Anda mendapatkan sessionId
+    const imageLoader = req.file ? req.file.filename : null;
+
+    if (!sessionId || !imageLoader) {
+      return res.status(400).json({ message: "Semua Input Diperlukan" });
+    }
+
+    // Pastikan path ke direktori assets ada
+    const assetsDir = path.join(__dirname, '../assets');
+    if (!fs.existsSync(assetsDir)) {
+      fs.mkdirSync(assetsDir, { recursive: true });
+    }
+
+    // Gunakan path lengkap untuk file yang diunggah
+    const uploadedImagePath = path.join(__dirname, '../assets', imageLoader);
+    const img = await Jimp.read(uploadedImagePath);
+  
+    const sendImagePath = path.join(__dirname, '../assets', 'decrypted-' + imageLoader);
+    await img.writeAsync(sendImagePath);
+
+    const insertgambar = 'INSERT INTO enkripsi (idusername, type, value) VALUES (?, ?, ?)';
+    connection.query(insertgambar, [sessionId, "Secret", sendImagePath], (error, results) => {
+      if (error) {
+        console.error('Error during the query:', error);
+        return res.status(500).json({ message: "Kesalahan Server" });
+      }
+      const sendImageUrl = `http://localhost:9000/assets/Secret-${imageLoader}`;
+      res.status(201).json({message: "Image uploaded and entry created successfully.", imageUrl: sendImageUrl });
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ message: "Kesalahan Server" });
+  }
+};
+
+
+exports.sendToServer2 = async (req, res) => {
+ 
+  try {
+    const { sessionId } = req.body;  // atau cara lain sesuai dengan bagaimana Anda mendapatkan sessionId
+    const imageLoader2 = req.file ? req.file.filename : null;
+
+    if (!sessionId || !imageLoader2) {
+      return res.status(400).json({ message: "Semua Input Diperlukan" });
+    }
+
+    // Pastikan path ke direktori assets ada
+    const assetsDir = path.join(__dirname, '../assets');
+    if (!fs.existsSync(assetsDir)) {
+      fs.mkdirSync(assetsDir, { recursive: true });
+    }
+
+    // Gunakan path lengkap untuk file yang diunggah
+    const uploadedImagePath = path.join(__dirname, '../assets', imageLoader2);
+    const img = await Jimp.read(uploadedImagePath);
+  
+    const sendImagePath = path.join(__dirname, '../assets', 'decrypted-' + imageLoader2);
+    await img.writeAsync(sendImagePath);
+
+    const insertgambar = 'INSERT INTO enkripsi (idusername, type, value) VALUES (?, ?, ?)';
+    connection.query(insertgambar, [sessionId, "Secret", sendImagePath], (error, results) => {
+      if (error) {
+        console.error('Error during the query:', error);
+        return res.status(500).json({ message: "Kesalahan Server" });
+      }
+      const sendImageUrl = `http://localhost:9000/assets/Secret-${imageLoader2}`;
+      res.status(201).json({message: "Image uploaded and entry created successfully.", imageUrl: sendImageUrl });
     });
   } catch (error) {
     console.error('Error:', error);

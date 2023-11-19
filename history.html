@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Text Encryption</title>
+  <link rel="stylesheet" href="history.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <a class="logo" href="home.html" style="padding-right: 20%;">Secret Encryption</a>
+      <div class="mobile-menu">
+        <div class="line1"></div>
+        <div class="line2"></div>
+        <div class="line3"></div>
+      </div>
+      <ul class="nav-list" style="margin-top: -3px;">
+        <li><a href="home.html">Text Encryption</a></li>
+        <li><a href="picture.html">Picture Encryption</a></li>
+        <li><a href="secret.html">Secret Encryption</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="index.html" onclick="logout()">Logout</a></li>
+      </ul>
+    </nav>
+    <br>
+  </header>
+  <main>
+    <div class="container">
+      <h2>History Table</h2>
+      <ul class="responsive-table">
+        <li class="table-header">
+          <div class="col col-2">Type</div>
+          <div class="col col-3">Value</div>
+          <div class="col col-4">Timestamp</div>
+        </li>
+        <!-- Rows will be populated by JavaScript -->
+      </ul>
+    </div>
+  </main>
+    <script src="mobile-navbar.js"></script>
+    <script src="session.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+      const sessionId = getSessionId(); // Make sure this matches the key used to store the session ID
+
+      fetch("http://localhost:9000/api/user/history", {
+        method: 'POST', // Changed to POST because you're sending data
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sessionId }), // Send the sessionId to the server
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        populateTable(data);
+      })
+      .catch(error => {
+        console.error('Error fetching history data:', error);
+      });
+    });
+
+      function convertToWIB(utcTimestamp) {
+      const utcDate = new Date(utcTimestamp);
+      const wibOffset = 7 * 60; // WIB is UTC+7
+      const wibDate = new Date(utcDate.getTime() + wibOffset * 60000);
+      return wibDate.toISOString().replace('T', ' ').substring(0, 19);
+    }
+
+      function populateTable(data) {
+      const table = document.querySelector('.responsive-table');
+
+      // Clear out the existing table rows (except for the header)
+      table.querySelectorAll('li:not(.table-header)').forEach(li => li.remove());
+
+      // Iterate over the data array and create table rows
+      data.forEach(item => {
+        const row = document.createElement('li');
+        row.className = 'table-row';
+
+        // Convert the UTC timestamp to WIB
+        const wibTimestamp = convertToWIB(item.timestamp);
+
+        const colType = `<div class="col col-2" data-label="Type">${item.type}</div>`;
+        const colValue = `<div class="col col-3" data-label="Value">${item.value}</div>`;
+        const colTimestamp = `<div class="col col-4" data-label="Timestamp">${wibTimestamp}</div>`;
+
+        row.innerHTML =  colType + colValue + colTimestamp;
+        table.appendChild(row);
+      });
+    }
+  </script>
+  </body>
+  </html>

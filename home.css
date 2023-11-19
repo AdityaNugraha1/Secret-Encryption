@@ -43,7 +43,7 @@ nav {
   top: 0;
   width: 100%;
   z-index: 10;
-  padding-bottom: 5px;
+  padding-bottom: 8px;
 }
 
 /* Navbar list styles */
@@ -108,6 +108,11 @@ nav {
   }
   .mobile-menu {
     display: block;
+
+  }
+  .nav-list.active {
+    /* ... (kode yang sudah ada) */
+    top : 8vh;
   }
 }
 
@@ -129,7 +134,7 @@ nav {
   width: 30px;
   background-color: white;
   margin: 5px;
-  margin-top: 14px;
+  margin-top: 12px;
   transition: transform 0.3s ease;
 }
 
@@ -145,7 +150,7 @@ nav {
 }
 
 .mobile-menu.active .line1 {
-  transform: rotate(-45deg) translate(-6.5px, 6.5px);
+  transform: rotate(-45deg) translate(-4px, 4px);
 }
 
 .mobile-menu.active .line2 {
@@ -423,3 +428,4 @@ ul.menu li a:hover {
     font-size: 16px; /* Larger font size for readability */
   }
 }
+

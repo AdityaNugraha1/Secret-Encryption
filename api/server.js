@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const path = require('path');
 
 // Konfigurasi CORS
 const corsOptions = {
@@ -10,6 +11,7 @@ const corsOptions = {
 
 app.use(express.json());
 app.use(cors(corsOptions)); // Gunakan CORS dengan opsi yang telah dikonfigurasi
+app.use('/assets', express.static(path.join(__dirname, './assets')));
 
 // Routes
 const userRoutes = require('./routes/userRoutes'); // Impor rute pengguna

@@ -18,9 +18,10 @@
       </div>
       <ul class="nav-list">
         <li><a href="home.html">Text Encryption</a></li>
-        <li><a href="#">Picture Encryption</a></li>
-        <li><a href="#">Secret Encryption</a></li>
-        <li><a href="#">History</a></li>
+        <li><a href="picture.html">Picture Encryption</a></li>
+        <li><a href="secret.html">Secret Encryption</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="index.html" onclick="logout()">Logout</a></li>
       </ul>
     </nav>
     <br>
@@ -28,21 +29,17 @@
   <main>
     <div class="container">
     <div class="content" style="padding-top: 4%;">
-      <div id="text" class="active" style="">
+      <div id="enkripsi" class="active" style="">
         <h2>Text Encryption</h2>
         <br>
         <div class="input-fields">
-          <input type="text" id="plaintext-caesar" placeholder="" />
+          <input type="text" id="plaintext" placeholder="" />
           <label for="">Plaintext</label>
-        </div>
-        <div class="input-fields">
-          <input type="number" id="key" placeholder="" />
-          <label for="">Key</label>
         </div>
         <button type="button" class="btn-encrypt" id="encrypt">Enkripsi</button>
         <button type="button" class="btn-decrypt" id="decrypt">Dekripsi</button>
         <div class="result">
-          <p id="result-caesar"></p>
+          <p id="result" style="word-wrap: break-word;"></p>
         </div>
       </div>
     </div>
@@ -51,7 +48,71 @@
     <script src="mobile-navbar.js"></script>
     <script src="session.js"></script>
     <script>
-  checkLogin();
-</script>
+        checkLogin();
+
+        document.getElementById("encrypt").addEventListener("click", async function() {
+          const plaintext = document.getElementById("plaintext").value;
+          const sessionId = getSessionId();
+
+          // Validate plaintext
+          if (!plaintext) {
+            alert("Semua Input Diperlukan");
+            return;
+          }
+
+          if (plaintext.length > 500) {
+            alert("Panjang Plaintext tidak boleh lebih dari 500 karakter");
+            return;
+          }
+
+          try {
+            const response = await fetch("http://localhost:9000/api/user/superenkripsi", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ sessionId, plaintext }),
+            });
+
+            const data = await response.json();
+            document.getElementById("result").textContent = data.hasilEnkripsi;
+          } catch (error) {
+            console.error("Error:", error);
+            document.getElementById("result").textContent = "Error: Gagal melakukan enkripsi";
+          }
+        });
+
+        document.getElementById("decrypt").addEventListener("click", async function() {
+          const plaintext = document.getElementById("plaintext").value;
+          const sessionId = getSessionId();
+
+          // Validate plaintext
+          if (!plaintext) {
+            alert("Semua Input Diperlukan");
+            return;
+          }
+
+          if (plaintext.length > 500) {
+            alert("Panjang Plaintext tidak boleh lebih dari 500 karakter");
+            return;
+          }
+
+          try {
+            const response = await fetch("http://localhost:9000/api/user/superdekripsi", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ sessionId, plaintext }),
+            });
+
+            const data = await response.json();
+            document.getElementById("result").textContent = data.hasildekripsi;
+          } catch (error) {
+            console.error("Error:", error);
+            document.getElementById("result").textContent = "Error: Gagal melakukan dekripsi";
+          }
+        });
+      </script>
   </body>
   </html>

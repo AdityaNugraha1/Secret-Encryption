@@ -17,7 +17,7 @@
         <div class="input_group">
           <i class="fa fa-user" aria-hidden="true"></i>
           <input type="input" name="username" id="username" placeholder="Username" class="input_text" autocomplete="off"/>
-         <span class="label">Username</span>
+          <span class="label">Username</span>
         </div>
         <div class="input_group">
           <i class="fa fa-unlock-alt"></i>
@@ -32,26 +32,27 @@
         </div>
       </div>
     </div>
+    <br>
   </div>
 
   <!-- Modal Structure -->
   <div id="modal" class="modal">
     <div class="modal-content">
-        <div class="modal-header">
-            <span class="close">✖</span>
-            <h2>Message</h2>
-        </div>
-        <div class="modal-body">
-            <p id="modal-message"></p>
-        </div>
+      <div class="modal-header">
+        <span class="close">✖</span>
+        <h2>Message</h2>
+      </div>
+      <div class="modal-body">
+        <p id="modal-message"></p>
+      </div>
     </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
   <script src="script.js"></script>
-  <script src="session.js"></script>
-  <script>
-   $(document).ready(function () {
+
+    <script>
+     $(document).ready(function () {
       var modal = document.getElementById("modal");
       var span = document.getElementsByClassName("close")[0];
       var modalMessage = document.getElementById("modal-message");
@@ -72,18 +73,24 @@
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify(userData),
-          xhrFields: { withCredentials: true }, // This ensures cookies are included
           success: function (response) {
+            var loginTime = new Date().getTime();
+            var id = response.id;  // Mengambil ID dari respons
+            sessionStorage.setItem('loginTime', loginTime);
+            sessionStorage.setItem('isLoggedIn', true);
+            sessionStorage.setItem('username', username);
+            sessionStorage.setItem('id', id);
             modalMessage.textContent = 'Login Successful!';
             modal.style.display = "block";
+            checkLogin(); // Call checkLogin after setting session storage
           },
           error: function (xhr, status, error) {
             var response = JSON.parse(xhr.responseText);
-            modalMessage.textContent = 'Login Failed: ' + response.message;
+            modalMessage.textContent = 'Login Failed ' + response.message;
             modal.style.display = "block";
           }
         });
-
+      });
       span.onclick = function() {
         modal.style.display = "none";
 
@@ -98,12 +105,23 @@
           modal.style.display = "none";
 
           // Redirect to home.html only if the modal was closed after a successful login
-          if (modalMessage.textContent === 'Login Successful!') { 
+          if (modalMessage.textContent === 'Login Successful!') { // Capital 'S'
             window.location.href = 'home.html';
           }
         }
       }
     });
-</script>
+  </script>
+<!--   <script>
+  // Check if the user is not logged in
+  if (!sessionStorage.getItem('isLoggedIn')) {
+    // User is not logged in, display a message
+    var loginMessage = document.createElement('p');
+    loginMessage.textContent = 'Silahkan Login Terlebih Dahulu';
+
+    // Append the message to the container div
+    document.querySelector('.container').appendChild(loginMessage);
+  }
+</script> -->
 </body>
 </html>
